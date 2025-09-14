@@ -73,9 +73,9 @@ export const selectFields = <
     _fields: fieldNames,
 });
 
-export const selectAll = (ctx: any) => ({
+export const selectAll = <Ctx extends AnySelectableContext>(ctx: Ctx) => ({
     ...ctx,
-    _fields: "ALL",
+    _fields: "ALL" as const,
 });
 
 export const where = (ctx: any, field: any, operator: "=", value: any) => ({
