@@ -64,10 +64,11 @@ type SelectableContext<Ctx> = CtxDb<Ctx> & {
 };
 
 type AnySelectableContext = SelectableContext<any>;
+type Fields<Ctx extends AnySelectableContext> = keyof Ctx['$db'][Ctx['_table']];
 
 export const selectFields = <
     Ctx extends AnySelectableContext,
-    Field extends keyof Ctx['$db'][Ctx['_table']]
+    Field extends Fields<Ctx>
 >(ctx: Ctx, fieldNames: Field[]) => ({
     ...ctx,
     _fields: fieldNames,
@@ -78,14 +79,22 @@ export const selectAll = <Ctx extends AnySelectableContext>(ctx: Ctx) => ({
     _fields: "ALL" as const,
 });
 
-export const where = (ctx: any, field: any, operator: "=", value: any) => ({
-    ...ctx,
-    _where: {
-        field,
-        operator,
-        value,
-    },
-});
+export const where = <
+    Ctx extends AnySelectableContext,
+    Field extends Fields<Ctx>
+>(
+    ctx: Ctx,
+    field: Field,
+    operator: "=",
+    value: Ctx['$db'][Ctx['_table']][Field]) => (
+    {
+        ...ctx,
+        _where: {
+            field,
+            operator,
+            value,
+        },
+    });
 
 export const deleteFrom = (ctx: any, tableName: any) => ({
     ...ctx,
