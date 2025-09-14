@@ -1,4 +1,6 @@
-import { expectTypeOf } from "vitest";
+//noinspection JSUnusedGlobalSymbols
+
+import {expectTypeOf} from "vitest";
 
 /**
  * Basiques
@@ -10,23 +12,23 @@ export function testBasics() {
   /**
    * Les types primitifs
    */
-  const firstName: ______ = "Charlotte"; // "Charlotte" is a text value
+  const firstName: string = "Charlotte"; // "Charlotte" is a text value
   expectTypeOf(firstName).toEqualTypeOf("Charlotte");
-  const age: _____ = 30; // Age is a number
+  const age: number = 30; // Age is a number
   expectTypeOf(age).toEqualTypeOf(30);
   const isEven = (num: number) => num % 2 === 0;
-  const isLoggedIn: _____ = true; // True/false value
+  const isLoggedIn: boolean = true; // True/false value
   expectTypeOf(isLoggedIn).toEqualTypeOf(isEven(2));
-  const emptyValue: _____ = null; // Represents intentional absence
+  const emptyValue: null = null; // Represents intentional absence
   expectTypeOf(emptyValue).toEqualTypeOf(null);
-  const notAssignedYet: _____ = undefined; // Declared but not yet given a value
+  const notAssignedYet: undefined = undefined; // Declared but not yet given a value
   expectTypeOf(notAssignedYet).toEqualTypeOf(undefined);
-  const uniqueId: _____ = Symbol("id"); // Unique and immutable identifier
+  const uniqueId: symbol = Symbol("id"); // Unique and immutable identifier
   expectTypeOf(uniqueId).toEqualTypeOf(Symbol("id"));
   // (note: needs ES2020 or later)
-  let reallyBigNumber: _____ = 1234567890123456789012345678901234567890n;
+  let reallyBigNumber: bigint = 1234567890123456789012345678901234567890n;
   expectTypeOf(reallyBigNumber).toEqualTypeOf(
-    1234567890123456789012345678901234567890n
+      1234567890123456789012345678901234567890n
   );
 }
 
@@ -37,45 +39,55 @@ export function testReferences() {
   /**
    * Array
    */
-  // const scores: _____ = [85, 92, 78];
-  // expectTypeOf(scores).toEqualTypeOf([85, 92, 78]);
-  // const fruits: _____ = ["apple", "banana", "cherry"]; // Hint: strings only
-  // expectTypeOf(fruits).toEqualTypeOf(["apple", "banana", "cherry"]);
-  // // Syntaxe générique
-  // const answers: Array<_____> = [true, false, true];
-  // expectTypeOf(answers).toEqualTypeOf([true, false, true]);
+  const scores: number[] = [85, 92, 78];
+  expectTypeOf(scores).toEqualTypeOf([85, 92, 78]);
+  const fruits: string[] = ["apple", "banana", "cherry"]; // Hint: strings only
+  expectTypeOf(fruits).toEqualTypeOf(["apple", "banana", "cherry"]);
+  // Syntaxe générique
+  const answers: Array<boolean> = [true, false, true];
+  expectTypeOf(answers).toEqualTypeOf([true, false, true]);
   /**
    * Tuples
    */
-  // const tuple: _____ = ["Alice", 25];
-  // expectTypeOf(tuple).toMatchTypeOf(["Alice", 25]);
+  const tuple: Array<string | number> = ["Alice", 25];
+  expectTypeOf(tuple).toMatchTypeOf(["Alice", 25]);
   /**
    * Les objets
    */
-  // const user: _____ = {
-  //   name: "Eléanore",
-  //   age: 30,
-  //   isEmployed: true,
-  // };
-  // expectTypeOf(user).toEqualTypeOf({
-  //   name: "Max",
-  //   age: 42,
-  //   isEmployed: false,
-  // });
-  // const company: _____ = {
-  //   name: "Devoxx",
-  //   address: {
-  //     city: "Paris",
-  //     zip: 75000,
-  //   },
-  // };
-  // expectTypeOf(company).toEqualTypeOf({
-  //   name: "Comet",
-  //   address: {
-  //     city: "Paris",
-  //     zip: 75002,
-  //   },
-  // });
+  const user: {
+    name: string;
+    age: number;
+    isEmployed: boolean;
+  } = {
+    name: "Eléanore",
+    age: 30,
+    isEmployed: true,
+  };
+  expectTypeOf(user).toEqualTypeOf({
+    name: "Max",
+    age: 42,
+    isEmployed: false,
+  });
+  const company: {
+    name: string;
+    address: {
+      city: string;
+      zip: number;
+    };
+  } = {
+    name: "Devoxx",
+    address: {
+      city: "Paris",
+      zip: 75000,
+    },
+  };
+  expectTypeOf(company).toEqualTypeOf({
+    name: "Comet",
+    address: {
+      city: "Paris",
+      zip: 75002,
+    },
+  });
 }
 
 /**
@@ -85,27 +97,34 @@ export function testOperators() {
   /**
    * typeof
    */
-  // const username = _____;
-  // type UsernameType = typeof username;
-  // expectTypeOf<UsernameType>().toMatchTypeOf<string>();
-  // const config = _____;
-  // type ConfigType = typeof config;
-  // expectTypeOf<ConfigType>().toEqualTypeOf<{
-  //   darkMode: boolean;
-  //   version: number;
-  // }>();
+  const username = '';
+  type UsernameType = typeof username;
+  expectTypeOf<UsernameType>().toMatchTypeOf<string>();
+  const config = {
+    darkMode: true,
+    version: 1
+  };
+  type ConfigType = typeof config;
+  expectTypeOf<ConfigType>().toEqualTypeOf<{
+    darkMode: boolean;
+    version: number;
+  }>();
   /**
    * keyof
    */
-  // type User = _____
-  // type UserKeys = keyof User;
-  // expectTypeOf<UserKeys>().toEqualTypeOf<"id" | "name" | "email">();
+  type User = {
+    id: string;
+    name: string;
+    email: string;
+  };
+  type UserKeys = keyof User;
+  expectTypeOf<UserKeys>().toEqualTypeOf<"id" | "name" | "email">();
   /**
    * lookup type
    */
-  // type Company = _____
-  // type CompanyNameType = Company["name"];
-  // expectTypeOf<CompanyNameType>().toEqualTypeOf<string>();
+  type Company = { name: string }
+  type CompanyNameType = Company["name"];
+  expectTypeOf<CompanyNameType>().toEqualTypeOf<string>();
 }
 
 /**
@@ -115,75 +134,78 @@ export function testGenericsTypes() {
   /**
    * Utiliser un type générique pour typer la sortie
    */
-  // function parseJSON<______>(input: string): unknown {
-  //     return JSON.parse(input)
-  // }
-  // const inferredFromOutput: {otherProp: string} = parseJSON('{otherProp:"tata"}');
-  // expectTypeOf(inferredFromOutput).toEqualTypeOf<{otherProp: string}>();
-  //
-  // const explicitGenericOutput = parseJSON<{ prop: string }>('{prop:"toto"}');
-  // expectTypeOf(explicitGenericOutput).toEqualTypeOf<{ prop: string }>();
+  function parseJSON<T>(input: string): T {
+    return JSON.parse(input)
+  }
+
+  const inferredFromOutput: { otherProp: string } = parseJSON('{otherProp:"tata"}');
+  expectTypeOf(inferredFromOutput).toEqualTypeOf<{ otherProp: string }>();
+
+  const explicitGenericOutput = parseJSON<{ prop: string }>('{prop:"toto"}');
+  expectTypeOf(explicitGenericOutput).toEqualTypeOf<{ prop: string }>();
+
   /**
    * Utiliser un type générique pour typer un paramètre
    */
-  // function addProp<______>(input: Record<string, string>) {
-  //     return {...input, newProp: 'yeahh'}
-  // }
-  //
-  // const inferredFromInput = addProp({toto: "tata" as const});
-  // expectTypeOf(inferredFromInput).toMatchTypeOf<{toto: "tata"; newProp: string}>();
-  //
-  // const explicitGenericInput = addProp<{prop1: string}>({prop1: "toto" });
-  // expectTypeOf(explicitGenericInput).toMatchTypeOf<{prop1: string; newProp: string}>();
+  function addProp<T extends Record<string, string>>(input: T) {
+    return {...input, newProp: 'yeahh'}
+  }
+
+  const inferredFromInput = addProp({toto: "tata" as const});
+  expectTypeOf(inferredFromInput).toMatchTypeOf<{ toto: "tata"; newProp: string }>();
+
+  const explicitGenericInput = addProp<{ prop1: string }>({prop1: "toto"});
+  expectTypeOf(explicitGenericInput).toMatchTypeOf<{ prop1: string; newProp: string }>();
+
   /**
    * Utiliser plusieurs types génériques
    */
-  // function transform<______, ______>(input: ______, fn: (input: ______) => ______): ______ {
-  //     return fn(input)
-  // }
-  // function stringify(data: any) {
-  //     return String(data)
-  // }
-  // function length(data: string) {
-  //     return data.length
-  // }
-  // const transformStringifyOutput = transform(42, stringify)
-  // expectTypeOf(transformStringifyOutput).toEqualTypeOf<string>();
-  //
-  // const transformLengthOutput = transform("four", length)
-  // expectTypeOf(transformLengthOutput).toEqualTypeOf<number>();
+  function transform<Input, Output>(input: Input, fn: (input: Input) => Output): Output {
+    return fn(input)
+  }
+
+  function stringify(data: any) {
+    return String(data)
+  }
+
+  function length(data: string) {
+    return data.length
+  }
+
+  const transformStringifyOutput = transform(42, stringify)
+  expectTypeOf(transformStringifyOutput).toEqualTypeOf<string>();
+
+  const transformLengthOutput = transform("four", length)
+  expectTypeOf(transformLengthOutput).toEqualTypeOf<number>();
+
   /**
    * Ajouter des contraintes
    */
-  // function lookup<______, ______ extends ______>(data: ______, prop: ______) {
-  //     return data[prop]
-  // }
-  // const userName = lookup({ name: "Max", age: 42}, 'name')
-  // expectTypeOf(userName).toEqualTypeOf<string>();
-  //
-  // const stringLength = lookup("four", "length")
-  // expectTypeOf(stringLength).toEqualTypeOf<number>();
+  function lookup<DataType, PropType extends keyof DataType>(data: DataType, prop: PropType) {
+    return data[prop]
+  }
+
+  const userName = lookup({name: "Max", age: 42}, 'name')
+  expectTypeOf(userName).toEqualTypeOf<string>();
+
+  const stringLength = lookup("four", "length")
+  expectTypeOf(stringLength).toEqualTypeOf<number>();
 }
 
 export function testLiteralTypes() {
   /**
    * Construire un type template
    */
-  // type FirstName = "Alice" | "Bob";
-  // type LastName = "Erlandwon" | "Razowsky";
-  // type AllFullNames = `${string}`;
-  // expectTypeOf<AllFullNames>().toEqualTypeOf<
-  //   "Alice Erlandwon" | "Alice Razowsky" | "Bob Erlandwon" | "Bob Razowsky"
-  // >();
+  type FirstName = "Alice" | "Bob";
+  type LastName = "Erlandwon" | "Razowsky";
+  type AllFullNames = `${FirstName} ${LastName}`;
+  expectTypeOf<AllFullNames>().toEqualTypeOf<"Alice Erlandwon" | "Alice Razowsky" | "Bob Erlandwon" | "Bob Razowsky">();
   /**
    * Inférer depuis un template
    */
-  // type ExtractFeeling<Statement> =
-  //   Statement extends `${infer firstPerson} ${string} ${infer secondPerson}`
-  //     ? firstPerson
-  //     : "";
-  // type BobFeeling = ExtractFeeling<"Bob likes Alice">;
-  // type AliceFeeling = ExtractFeeling<"Alice hates Bob">;
-  // expectTypeOf<BobFeeling>().toEqualTypeOf<"likes">();
-  // expectTypeOf<AliceFeeling>().toEqualTypeOf<"hates">();
+  type ExtractFeeling<Statement> = Statement extends `${string} ${infer feeling} ${string}` ? feeling : "";
+  type BobFeeling = ExtractFeeling<"Bob likes Alice">;
+  type AliceFeeling = ExtractFeeling<"Alice hates Bob">;
+  expectTypeOf<BobFeeling>().toEqualTypeOf<"likes">();
+  expectTypeOf<AliceFeeling>().toEqualTypeOf<"hates">();
 }
