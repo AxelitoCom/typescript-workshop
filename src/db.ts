@@ -57,7 +57,18 @@ export const selectFrom = <
     _table: tableName,
 });
 
-export const selectFields = (ctx: any, fieldNames: any[]) => ({
+
+type SelectableContext<Ctx> = CtxDb<Ctx> & {
+    _operation: "select";
+    _table: keyof Ctx;
+};
+
+type AnySelectableContext = SelectableContext<any>;
+
+export const selectFields = <
+    Ctx extends AnySelectableContext,
+    Field extends keyof Ctx['$db'][Ctx['_table']]
+>(ctx: Ctx, fieldNames: Field[]) => ({
     ...ctx,
     _fields: fieldNames,
 });
