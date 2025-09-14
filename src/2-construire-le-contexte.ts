@@ -10,8 +10,8 @@ export function testContextBuilder() {
      *
      * Go to ./db.ts to implement working type
      */
-    // const customerContext = buildContext<CustomerDatabase>();
-    // expectTypeOf(customerContext).toEqualTypeOf<{
-    //     $db: CustomerDatabase;
-    // }>();
+     const customerContext = buildContext<CustomerDatabase>();
+     expectTypeOf(customerContext).toEqualTypeOf<{
+         $db: CustomerDatabase;
+     }>();
 }

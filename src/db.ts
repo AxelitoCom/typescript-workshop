@@ -33,9 +33,9 @@ export type ShoppingDatabase = {
   products: ProductTable;
 };
 
-export const buildContext = () => {
+export const buildContext = <DB>() => {
   return {
-    $db: undefined,
+    $db: undefined as DB
   };
 };
 
