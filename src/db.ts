@@ -49,10 +49,15 @@ export const buildContext = <DB>() => {
 type CtxDb<DB> = { $db: DB };
 type Database = CtxDb<any>;
 
+// Alias pour les tables
+type AliasedTabled<Table> = `${Table & string} ${string}`;
+type TableOrAlias<Table> = Table | AliasedTabled<Table>;
+type AnyTable<Ctx extends Database> = TableOrAlias<keyof Ctx["$db"]>;
+
 export const selectFrom = <
-    CTX extends Database,
-    TABLE extends keyof CTX['$db']
->(ctx: CTX, tableName: TABLE) => ({
+    Ctx extends Database,
+    Table extends AnyTable<Ctx>
+>(ctx: Ctx, tableName: Table) => ({
     ...ctx,
     _operation: "select" as const,
     _table: tableName,
@@ -73,9 +78,18 @@ type CtxOperations = SelectableContext<any> | DeletableContext<any>;
 type Tables<Ctx extends CtxOperations> = Ctx['$db'][Ctx['_table']];
 type Fields<Ctx extends CtxOperations> = keyof Tables<Ctx>;
 
+// Alias champs
+type AliasChamp<Champ> = Champ | `${Champ & string} as ${string}`;
+type ChampOuAlias<Table, Champ> = AliasChamp<Champ> | `${Table & string}.${AliasChamp<Champ> & string}`;
+type Champ<Ctx extends CtxOperations> =
+    Ctx['_table'] extends `${infer Table} ${infer Alias}` ?
+        ChampOuAlias<Alias, keyof Ctx['$db'][Table]>
+        :
+        ChampOuAlias<Ctx['_table'], Fields<Ctx>>
+
 export const selectFields = <
     Ctx extends SelectableContext<any>,
-    Field extends Fields<Ctx>
+    Field extends Champ<Ctx>
 >(ctx: Ctx, fieldNames: Field[]) => ({
     ...ctx,
     _fields: fieldNames,
