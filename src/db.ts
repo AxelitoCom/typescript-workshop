@@ -47,9 +47,10 @@ export const buildContext = <DB>() => {
 };
 
 type CtxDb<DB> = { $db: DB };
+type Database = CtxDb<any>;
 
 export const selectFrom = <
-    CTX extends CtxDb<any>,
+    CTX extends Database,
     TABLE extends keyof CTX['$db']
 >(ctx: CTX, tableName: TABLE) => ({
     ...ctx,
@@ -63,30 +64,36 @@ type SelectableContext<Ctx> = CtxDb<Ctx> & {
     _table: keyof Ctx;
 };
 
-type AnySelectableContext = SelectableContext<any>;
-type Fields<Ctx extends AnySelectableContext> = keyof Ctx['$db'][Ctx['_table']];
+type DeletableContext<DB> = CtxDb<DB> & {
+    _operation: "delete";
+    _table: keyof DB;
+};
+
+type CtxOperations = SelectableContext<any> | DeletableContext<any>;
+type Tables<Ctx extends CtxOperations> = Ctx['$db'][Ctx['_table']];
+type Fields<Ctx extends CtxOperations> = keyof Tables<Ctx>;
 
 export const selectFields = <
-    Ctx extends AnySelectableContext,
+    Ctx extends SelectableContext<any>,
     Field extends Fields<Ctx>
 >(ctx: Ctx, fieldNames: Field[]) => ({
     ...ctx,
     _fields: fieldNames,
 });
 
-export const selectAll = <Ctx extends AnySelectableContext>(ctx: Ctx) => ({
+export const selectAll = <Ctx extends SelectableContext<any>>(ctx: Ctx) => ({
     ...ctx,
     _fields: "ALL" as const,
 });
 
 export const where = <
-    Ctx extends AnySelectableContext,
+    Ctx extends CtxOperations,
     Field extends Fields<Ctx>
 >(
     ctx: Ctx,
     field: Field,
     operator: "=",
-    value: Ctx['$db'][Ctx['_table']][Field]) => (
+    value: Tables<Ctx>[Field]) => (
     {
         ...ctx,
         _where: {
@@ -96,8 +103,11 @@ export const where = <
         },
     });
 
-export const deleteFrom = (ctx: any, tableName: any) => ({
+export const deleteFrom = <
+    Ctx extends Database,
+    Table extends keyof Tables<DeletableContext<Ctx>>
+>(ctx: Ctx, tableName: Table) => ({
     ...ctx,
-    _operation: "delete",
+    _operation: "delete" as const,
     _table: tableName,
 });
