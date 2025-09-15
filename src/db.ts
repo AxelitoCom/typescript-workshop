@@ -50,8 +50,8 @@ type CtxDb<DB> = { $db: DB };
 type Database = CtxDb<any>;
 
 // Alias pour les tables
-type AliasedTabled<Table> = `${Table & string} ${string}`;
-type TableOrAlias<Table> = Table | AliasedTabled<Table>;
+type AliasTable<Table> = `${Table & string} ${string}`;
+type TableOrAlias<Table> = Table | AliasTable<Table>;
 type AnyTable<Ctx extends Database> = TableOrAlias<keyof Ctx["$db"]>;
 
 export const selectFrom = <
